@@ -1,22 +1,14 @@
-import { UploadFileItem } from '../files';
-import { MetaData } from '../meta';
-import { MessageSemanticSearchChunk } from '../rag';
-import { GroundingSearch } from '../search';
-import type { ChatMessageError, MessageMetadata, MessageRoleType, ModelReasoning } from './base';
-import { ChatImageItem } from './image';
-import { ChatPluginPayload, ChatToolPayload } from './tools';
-import { Translate } from './translate';
+import { UploadFileItem } from '../../files';
+import { MetaData } from '../../meta';
+import { MessageSemanticSearchChunk } from '../../rag';
+import { GroundingSearch } from '../../search';
+import { ChatImageItem, ChatMessageError, MessageMetadata, ModelReasoning } from '../common';
+import { ChatPluginPayload, ChatToolPayload } from '../common/tools';
+import { ChatMessageExtra } from './extra';
+import { ChatFileChunk } from './rag';
 import { ChatVideoItem } from './video';
 
-export interface ChatTranslate extends Translate {
-  content?: string;
-}
-
-export interface ChatTTS {
-  contentMd5?: string;
-  file?: string;
-  voice?: string;
-}
+export type UIMessageRoleType = 'user' | 'system' | 'assistant' | 'tool' | 'supervisor';
 
 export interface ChatFileItem {
   content?: string;
@@ -27,25 +19,6 @@ export interface ChatFileItem {
   url: string;
 }
 
-export interface ChatFileChunk {
-  fileId: string;
-  fileType: string;
-  fileUrl: string;
-  filename: string;
-  id: string;
-  similarity?: number;
-  text: string;
-}
-
-export interface ChatMessageExtra {
-  fromModel?: string;
-  fromProvider?: string;
-  // 翻译
-  translate?: ChatTranslate | false | null;
-  // TTS
-  tts?: ChatTTS;
-}
-
 export interface AssistantContentBlock {
   content: string;
   fileList?: ChatFileItem[];
@@ -54,7 +27,7 @@ export interface AssistantContentBlock {
   tools?: ChatToolPayload[];
 }
 
-export interface ChatMessage {
+export interface UIChatMessage {
   // Group chat fields (alphabetically before other fields)
   agentId?: string | 'supervisor';
   /**
@@ -104,7 +77,7 @@ export interface ChatMessage {
   /**
    * message role type
    */
-  role: MessageRoleType;
+  role: UIMessageRoleType;
   search?: GroundingSearch | null;
   sessionId?: string;
   /**
@@ -127,7 +100,7 @@ export interface ChatMessage {
 }
 
 export interface CreateMessageParams
-  extends Partial<Omit<ChatMessage, 'content' | 'role' | 'topicId' | 'chunksList'>> {
+  extends Partial<Omit<UIChatMessage, 'content' | 'role' | 'topicId' | 'chunksList'>> {
   content: string;
   error?: ChatMessageError | null;
   fileChunks?: MessageSemanticSearchChunk[];
@@ -135,7 +108,7 @@ export interface CreateMessageParams
   fromModel?: string;
   fromProvider?: string;
   groupId?: string;
-  role: MessageRoleType;
+  role: UIMessageRoleType;
   sessionId: string;
   targetId?: string | null;
   threadId?: string | null;

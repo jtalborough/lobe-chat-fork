@@ -1,6 +1,16 @@
 import { z } from 'zod';
 
-import { MessageSemanticSearchChunk } from '../rag';
+import { MessageSemanticSearchChunk } from '../../rag';
+
+export interface ChatFileChunk {
+  fileId: string;
+  fileType: string;
+  fileUrl: string;
+  filename: string;
+  id: string;
+  similarity?: number;
+  text: string;
+}
 
 export const SemanticSearchChunkSchema = z.object({
   id: z.string(),
